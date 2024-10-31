@@ -9,7 +9,7 @@
     - name: Build Docker image
       command: docker build -t pshhhhh98/keduitlab:yellow .
       args:
-        chdir: /root/portal  # Dockerfile이 위치한 디렉토리
+        chdir: /root/jen  # Dockerfile이 위치한 디렉토리
 
     - name: Push Docker image to Docker Hub
       command: docker push pshhhhh98/keduitlab:yellow
