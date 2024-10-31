@@ -26,21 +26,14 @@
 pipeline {
   agent any
   stages {
-    stage('git scm update') {
-      steps {
-        git url: 'https://github.com/pshhhhh98/jenkinstest.git', branch: 'main'
+    stage('Deploy Docker Image on Master') {
+      environment {
+        ANSIBLE_HOST_KEY_CHECKING = 'False'
+        ANSIBLE_PRIVATE_KEY_FILE = '/var/lib/jenkins/.ssh/ansible_key'
       }
-    }
-    stage('delivery and deployment') {
       steps {
         sh '''
-        ansible master -m copy -a "src=testpod.yml dest=/root/testpod.yml" --become
-        now=$(date +%y%m%d%H%M)
-        sudo docker build -t pshhhhh98/keduitlab:${now} .
-        sudo docker push pshhhhh98/keduitlab:${now}
-        ansible node -m shell -a "sudo docker pull pshhhhh98/keduitlab:${now}"
-        ansible master -m shell -a "sudo kubectl create deploy web-${now} --replicas=3 --port=80 --image=pshhhhh98/keduitlab:${now}"
-        ansible master -m shell -a "sudo kubectl expose deploy web-${now} --type=LoadBalancer --port=80 --target-port=80 --name=web-${now}-svc"
+        ansible-playbook -i /etc/ansible/hosts /var/lib/jenkins/workspace/ansible/playbook.yml
         '''
       }
     }
