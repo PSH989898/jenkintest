@@ -3,7 +3,7 @@
   hosts: master
   tasks:
     - name: Log in to Docker Hub
-      command: docker login -u pshhhhh -p a1a2a3a4@@
+      command: docker login -u pshhhhh98 -p a1a2a3a4@@
       no_log: true
 
     - name: Build Docker image
