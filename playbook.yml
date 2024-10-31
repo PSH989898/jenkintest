@@ -1,0 +1,23 @@
+---
+- name: Build and Push Docker image on Master
+  hosts: master
+  tasks:
+    - name: Log in to Docker Hub
+      command: docker login -u wonjune95 -p dnjswns95!!
+      no_log: true
+
+    - name: Build Docker image
+      command: docker build -t wonjune95/keduitlab:puple .
+      args:
+        chdir: /root/portal  # Dockerfile이 위치한 디렉토리
+
+    - name: Push Docker image to Docker Hub
+      command: docker push wonjune95/keduitlab:puple
+
+    - name: Deploy to Kubernetes
+      command: kubectl create deploy web-puple --replicas=3 --port=80 --image=wonjune95/keduitlab:puple
+      ignore_errors: yes  # 배포가 이미 존재하는 경우 오류 무시
+
+    - name: Expose Service on Kubernetes
+      command: kubectl expose deploy web-puple --type=LoadBalancer --port=80 --target-port=80 --name=web-puple-svc
+      ignore_errors: yes  # 서비스가 이미 존재하는 경우 오류 무시
